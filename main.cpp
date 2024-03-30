@@ -19,6 +19,12 @@ const char* fragmentShaderSource=
 "	FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
 "}\0";
 
+float vertices[] = 
+{
+	-0.5f, -0.5f, 0.0f,
+	0.5f, -0.5f, 0.0f,
+	0.0f, 0.5f, 0.0f
+};
 int main(void)
 {
 	if(!glfwInit())
@@ -83,6 +89,7 @@ int main(void)
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 
+
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if(!success)
 	{
@@ -91,8 +98,24 @@ int main(void)
 		return -1;
 	}
 
+	unsigned int VAO, VBO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+
+	
+
 	while(!glfwWindowShouldClose(window))
 	{
+		glUseProgram(shaderProgram);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
